@@ -13,45 +13,45 @@
 //     updatedAt: {timestamp}
 //   }
 
-  const mongoose =require('mongoose')
+  const mongoose =require('mongoose');
 
-  const userSchema = new mongoose.Schema({
+  const userSchema =new mongoose.Schema({
     title:{
-        typeof: string,
+        type: String,
         required: true,
-        enum: [Mr,Mrs, Miss]
+        enum:  ['Mr', 'Miss', 'Mrs']
     },
     name:{
-        typeof: string,
+        type: String,
         required: true  
     },
     phone:{
-        typeof: string,
+        type: String,
         required: true,
         unique: true
 
     },
      email:{
-        typeof: string,
+        type: String,
         required:true,
         unique: true
      },
      password:{
-        typeof:string,
+        type:String,
         required:true
      },
      address:{
         street:{
-            typeof: string
+            type: String
         },
         city:{
-            typeof: string
+            type: String
         },
         pincode:{
-            typeof:string 
+            type:String
      }
     }
   },{timestamps: true})
 
 
-  module.exports =mongoose.Model('User',userSchema)
+  module.exports =mongoose.model('User',userSchema)

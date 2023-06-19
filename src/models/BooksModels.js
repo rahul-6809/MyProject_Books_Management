@@ -19,30 +19,30 @@
   const bookSchema = new mongoose.Schema({
 
     title:{
-        typeof: string,
+        type: String,
         required: true,
         unique: true,
     },
     excerpt:{
-        typeof: string,
+        type: String,
         required: true,
     },
     userId:{
-        typeof:ObjectId,
+        type:ObjectId,
         required: true,
         ref: 'user'
     },
     ISBN:{
-        typeof: string,
+        type: String,
         required: true,
         unique: true
     },
     category:{
-        typeof:string,
+        type:String,
         required: true
     },
     subcategory:{
-        typeof:string,
+        type:String,
         required: true
     },deletedAt: {
         type: Date,

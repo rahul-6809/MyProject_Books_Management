@@ -2,12 +2,14 @@ const express= require('express')
 const router= express.Router()
 
 const {userLogin,userRegistration}=require('../controllers/userController')
+const { createBook,getBook,getBookById,updateBookById,deleteBookById}=require('../controllers/bookController')
+const{createReview,updateReview,deleteReview}=require('../controllers/reviewController')
 
 router.post('/register',userRegistration)
 router.post('/login', userLogin)
 
 
-router.post('/books', createBook)
+ router.post('/books', createBook)
 router.get('/books', getBook)
 router.get('/books/:bookId' , getBookById)
 router.put('/books/:bookId', updateBookById)

@@ -41,9 +41,13 @@ const userRegistration= async (req,res) =>{
    if(!password.length>=8&&password.length<=15){
     return res.status(400).send({status:false,message: "Password must be at least 8 characters longed"})
    }
+   if(!address){
+    const userData2 = { title, name, phone, email, password };
+    const saveUser = await userModel.create( userData2)
+    return res.status(201).send({ status: true, message: "Sucess", data: saveUser })
+    }
 
-
-   const usercreate= await userModel.create({title,name,email,password,address})
+   const usercreate= await userModel.create({title,name,phone,email,password,address})
    res.status(201).send({status:true,data:usercreate})
 
 
@@ -51,6 +55,14 @@ const userRegistration= async (req,res) =>{
         res.status(500).send({status:false,message:err.message});
     }
 }
+
+
+
+
+
+
+
+
 
 
 
@@ -77,6 +89,7 @@ const  userLogin =async (req,res) => {
         }else{
 
             const  token = jwt.sign({userId:findUser._id},SECRET_KEY)
+            res.setHeader("x-api-key", token);
             res.status(200).send({status:true, data:'{token:token}'})
         
         }
