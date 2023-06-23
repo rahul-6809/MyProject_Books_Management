@@ -1,7 +1,7 @@
 const {SECRET_KEY}= require('../../config')
 const jwt = require('jsonwebtoken')
 const bookModel =require('../models/BooksModels')
-const {isValidObject}=require('mongoose')
+const {isValidObjectId}=require('mongoose')
 
 
 const  UserAuthenticate=async( req,res,next)=>{ 
@@ -32,7 +32,7 @@ const UserAuthorization = async function (req, res, next) {
         let tokenId = req.userId;
         let bookId = req.params.bookId || req.query.bookId;
 
-        if (!isValidObject(bookId)) return res.status(400).send({ status: false, message: `Book id ${bookId} is invalid` })
+        if (!isValidObjectId(bookId)) return res.status(400).send({ status: false, message: `Book id ${bookId} is invalid` })
 
         const findUser = await bookModel.findOne({ _id: bookId });
         if (!findUser) return res.status(404).send({ status: false, message: 'User not found' })
