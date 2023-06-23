@@ -1,19 +1,24 @@
 const userModel=require('../models/UserModels')
-const isValid =require('../validate/validation')
+const {isValid} =require('../validate/util')
 const validator = require('validator')
 const arrTitle = ['Mr', 'Mrs', 'Miss']
 const jwt = require('jsonwebtoken')
 const {SECRET_KEY} = require('../../config')
 
-
+// let isValid = function (value) {
+//     if (typeof value === 'undefined' || value === null) return false;
+//     if (typeof value === 'string' && value.trim().length === 0) return false;
+//     return true;
+// }
 const userRegistration= async (req,res) =>{
     try{
      const {title ,name,phone,email,password,address}=req.body
    
-     if(!isValid(title)||isValid(name)||isValid(phone)||isValid(email)||!isValid(password)||isValid(address)){
+     
+     if(!isValid(title)||!isValid(name)||!isValid(phone)||!isValid(email)||!isValid(password)||!isValid(address)){
         return res.status(400).send({status:false,message:"Please provide a valid Input"})
     }
-    
+   
 
     if (!arrTitle.includes(title)) {
         return res.status(400).send({ status: false, message: `Provide a valid title that is titles ${arrTitle}` })
@@ -38,7 +43,7 @@ const userRegistration= async (req,res) =>{
 
 
 
-   if(!password.length>=8&&password.length<=15){
+   if(!(password.length>=8&&password.length<=15)){
     return res.status(400).send({status:false,message: "Password must be at least 8 characters longed"})
    }
    if(!address){
@@ -47,6 +52,7 @@ const userRegistration= async (req,res) =>{
     return res.status(201).send({ status: true, message: "Sucess", data: saveUser })
     }
 
+    
    const usercreate= await userModel.create({title,name,phone,email,password,address})
    res.status(201).send({status:true,data:usercreate})
 
@@ -90,7 +96,7 @@ const  userLogin =async (req,res) => {
 
             const  token = jwt.sign({userId:findUser._id},SECRET_KEY)
             res.setHeader("x-api-key", token);
-            res.status(200).send({status:true, data:'{token:token}'})
+            res.status(200).send({status:true, data:{token:token}})
         
         }
 

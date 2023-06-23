@@ -1,21 +1,9 @@
 const bookModel= require('../models/BooksModels.js')
-const {isValid, isValidDate, isValidISBN,isValidObjectId}=require('../validate/validation')
+const userModel=require('../models/UserModels.js')
+const {isValidObjectId}=require('mongoose')
+const {isValid, isValidDate}=require('../validate/util.js')
 const validator=require('validator')
 const reviewModel=require('../models/ReviewModels.js')
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -157,13 +145,13 @@ const getBookById =async (req,res)=>{
 
 
    //getting book by book id
-   const book = await bookModel.findone({_Id:bookId,isDeleted:false});
+   const book = await bookModel.findOne({_id:bookId,isDeleted:false});
    if (!book) {return res.status(400).send({status:false, message:'book not found'});
    }
    
    //desturcting according readme
-   const { title, excerpt, userId, category, reviews, subcategory, deletedAt, isDeleted, releasedAt} = bookList
-        let details = { title, excerpt, userId, category, reviews, subcategory, deletedAt, isDeleted, releasedAt, createdAt, updatedAt }
+   const { title, excerpt, userId, category, reviews, subcategory, deletedAt, isDeleted, releasedAt} = book
+        let details = { title, excerpt, userId, category, reviews, subcategory, deletedAt, isDeleted, releasedAt}
 
 
         //finding and sending all reviews for book
@@ -176,10 +164,92 @@ const getBookById =async (req,res)=>{
 }
 
 
+
+
+
+
 const updateBookById = async(req,res)=>{
    try{
 
+      //checking in db 
+const bookId=req.body.bookId;
+     // if(!isValidObjectId(bookId)){
+    //     return res.status(400).send({status:false,message:'please provide valid bookId'});
+     // }
+
+//validating and checking in db of  title
+
+      let {title,excerpt,releasedAt,ISBN} = req.body
+      if(title=""){
+         return res.status(400).send({status:false,message:"required to update"})
+      }
+      else if(title){
+         if(!isValid(title)){
+            return res.status(400).send({status:false,message:"title is not a valid title"})
+         }
+            const uniqueTitle = await bookModel.findOne({title:title})
+            if(uniqueTitle){
+               return res.status(400).send({status:false,message:"title already exists"})
+            }
+      }
+
+      //validating excerpt
+
+     if(excerpt=""){
+         return res.status(400).send({status:false,message:"required to update"})
+      }
+      else if(excerpt){
+         if(!isValid(excerpt)){
+            return res.status(400).send({status:false,message:"excerpt not a valid excerpt"})
+          }
+                }
+
+
+
+              //  validating and checking in db  of ISBN
+
+       if(ISBN=""){
+         return res.status(400).send({status:false,message:"required to update"})
+       }
+       else if(ISBN){
+      if(!isValid(ISBN)){
+         return res.status(400).send({status:false,message:"Invalid ISBN"})
+       }
+       if(!validator.isISBN(ISBN)){
+         return res.status(400).send({status:false,message:'ISBN format is not valid'})
+       }
+       const UniqueISBN= await bookModel.findOne({ISBN:ISBN})
+       if(UniqueISBN){
+         return res.status(400).send({status:false,message:"ISBN already exists"})
+       }
+      }
+
+
+  //validating releaseAt
+
+      if(releasedAt=""){
+         return res.status(400).send({status:false,message:"required to update"})
+      }else if(releasedAt){
+         if(!isValid(releasedAt)){
+            return res.status(400).send({status:false,message:"release date not valid"})
+         }
+         if(!isValidDate(releasedAt)){
+            return res.status(400).send({status:false,message:"relessate date format not valid"})
+         }
+      }
+     
+      //Updating Book Document
+
+      let updateField={title,excerpt,ISBN,releasedAt}
+      let updatebook= await bookModel.findOneAndUpdate({_id:bookId,isDeleted:false}, updateField,{new:true})
+      if(!updatebook){
+         return res.status(404).send({status:false,message:'Book not found'})
+      }else{
+         res.status(200).send({status:true,message: "Success", data:updatebook});
+      }
+
    }catch(err){
+      console.log(err)
       return res.status(500).send({status:false, message:err.message});
    }
 }
@@ -193,6 +263,20 @@ const updateBookById = async(req,res)=>{
 
 const deleteBookById = async(req,res)=>{
    try{
+    
+      const data=req.params.bookId;
+
+      const DeleteBook=await bookModel.findOneAndUpdate({_id:data, isDeleted:false},
+         {isDeleted:true,releasedAt:new Date()},
+         {new:true});
+
+         if(!DeleteBook){
+            return res.status(404).send({status:false,message:'book not found'})
+         }
+        return res.status(200).send({status:true,message:"success",data:DeleteBook});
+
+
+
 
    }catch(err){
       return res.status(500).send({status:false, message:err.message});

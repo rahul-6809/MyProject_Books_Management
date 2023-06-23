@@ -45,8 +45,8 @@
         type:String,
         required: true
     },deletedAt: {
-        type: Date,
-        default: null
+        type: Date
+        
     },
     isDeleted: {
         type: Boolean,

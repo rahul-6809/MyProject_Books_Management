@@ -1,5 +1,6 @@
 const bookModel= require('../models/BooksModels.js')
-const {isValid, isValidDate, isValidRequestBody,isValidName,isValidObjectId}=require('../validate/validation')
+const {isValidObjectId}=require('mongoose')
+const {isValid, isValidDate, isValidName}=require('../validate/util.js')
 const validator=require('validator')
 const reviewModel=require('../models/ReviewModels.js')
 
@@ -12,9 +13,9 @@ const createReview = async(req,res)=>{
      if(!isValid(data)){ return res.status(400).send({status:false,message:'Data required'}) }
      data["reviewedAt"] = new Date();
 
-     const bookId= req.params.bookId
-     if(!isValidObjectId(bookId)){ return res.status(400).send({status:false,message:'provide valid bookId'}) }
-
+     let bookId = req.params.bookId
+        if (!isValidObjectId(bookId)) { return res.status(400).send({ status: false, message: "Please provide valid Book Id " }) }
+        data["bookId"] = bookId
 
 if(data.reviewedBy==" "){
     return res.status(400).send({status:false,message:'provide review'})
@@ -44,8 +45,8 @@ if (!isValid(data.rating)) { return res.status(400).send({ status: false, messag
         const {_id,reviewedBy,reviewedAt,rating,review}= createData
         const reviewData = {_id,bookId,reviewedBy,reviewedAt,rating,review}
 
-        const { title, excerpt, userId, category, reviews, subcategory, deletedAt, isDeleted, releasedAt, createdAt, updatedAt } = updateReview
-        let details = { title, excerpt, userId, category, reviews, subcategory, deletedAt, isDeleted, releasedAt, createdAt, updatedAt }
+        const { title, excerpt, userId, category, reviews, subcategory, isDeleted, releasedAt, createdAt, updatedAt } = updateReview
+        let details = { title, excerpt, userId, category, reviews, subcategory, isDeleted, releasedAt, createdAt, updatedAt }
 
         //sending updated review for book
         details["reviewData"] = reviewData
@@ -78,11 +79,9 @@ const updateReview = async function (req, res) {
        let reviewId = req.params.reviewId
        if (!isValidObjectId(reviewId)) return res.status(400).send({ status: false, message: " Invalid reviewId found" })
 
-        //validating request body
+        
         let reqBody = req.body;
-       if (!isValidRequestBody(reqBody)) {
-           return res.status(400).send({ status: false, message: "please enter data in body" })
-       }
+       
 
        //validating rating
        if(reqBody.rating==""){return res.status(400).send({ status: false, message: "Please provide valid rating."})}

@@ -1,16 +1,16 @@
 const {SECRET_KEY}= require('../../config')
 const jwt = require('jsonwebtoken')
-const userModel=require('../models/UserModels')
+const bookModel =require('../models/BooksModels')
 const {isValidObject}=require('mongoose')
 
 
-const  authenticateUser=async( req,res)=>{ 
+const  UserAuthenticate=async( req,res,next)=>{ 
     try{ 
 const token =req.headers[`x-api-key`]
 if(!token){
     return res.status(404) .send({status: false, message: 'Provide credentials headers token'})
 }
-const decoded= jwt.verify(token,SECRET_KEY)
+const decodedToken= jwt.verify(token,SECRET_KEY)
 req.userId = decodedToken.userId
 next();
 }
@@ -27,7 +27,7 @@ catch(err){
 
 
 
-const authorization = async function (req, res, next) {
+const UserAuthorization = async function (req, res, next) {
     try {
         let tokenId = req.userId;
         let bookId = req.params.bookId || req.query.bookId;
@@ -45,4 +45,4 @@ const authorization = async function (req, res, next) {
     }
 }
 
-module.exports={ authenticateUser,authorization}
+module.exports={  UserAuthenticate,UserAuthorization}
