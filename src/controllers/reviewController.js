@@ -160,7 +160,7 @@ const deleteReview = async function (req, res) {
 
         //==Updating review count in book document==//
         const deleteReviewCount = await bookModel.findOneAndUpdate({ _id: bookId }, { $inc: { reviews: -1 } }, { new: true })
-        return res.status(200).send({ status: true, message: "Success", data: deleteReviewCount })
+        return res.status(200).send({ status: true, message: "Success" })
 
     } catch (error) {
         return res.status(500).send({ status: false, message: error.message })

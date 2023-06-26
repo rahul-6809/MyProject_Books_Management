@@ -123,10 +123,8 @@ const getBookById =async (req,res)=>{
 
 //validating and checking in db of  title
  let {title,excerpt,releasedAt,ISBN} = req.body
- if(title=""){
-  return res.status(400).send({status:false,message:"required to update"})
-      }
- else if(title){
+ 
+  if(title){
  if(!isValid(title)){
  return res.status(400).send({status:false,message:"title is not a valid title"})
  }
@@ -137,19 +135,13 @@ const getBookById =async (req,res)=>{
       }
 
   //validating excerpt
-if(excerpt=""){
-  return res.status(400).send({status:false,message:"required to update"})
-   }
-else if(excerpt){
+ if(excerpt){
 if(!isValid(excerpt)){
  return res.status(400).send({status:false,message:"excerpt not a valid excerpt"})
    }
     }
 //  validating and checking in db  of ISBN
- if(ISBN=""){
-      return res.status(400).send({status:false,message:"required to update"})
-       }
-       else if(ISBN){
+  if(ISBN){
       if(!isValid(ISBN)){
          return res.status(400).send({status:false,message:"Invalid ISBN"})
        }
@@ -163,9 +155,7 @@ if(!isValid(excerpt)){
       }
 
 //validating releaseAt
-if(releasedAt=""){
-         return res.status(400).send({status:false,message:"required to update"})
-      }else if(releasedAt){
+ if(releasedAt){
          if(!isValid(releasedAt)){
             return res.status(400).send({status:false,message:"release date not valid"})
          }
@@ -189,6 +179,7 @@ if(releasedAt=""){
 }
 
 
+
 const deleteBookById = async(req,res)=>{
    try{
     
@@ -200,7 +191,7 @@ const deleteBookById = async(req,res)=>{
          if(!DeleteBook){
             return res.status(404).send({status:false,message:'book not found'})
          }
-        return res.status(200).send({status:true,message:"success",data:DeleteBook});
+        return res.status(200).send({status:true,message:"success"});
    }catch(err){
       return res.status(500).send({status:false, message:err.message});
    }
